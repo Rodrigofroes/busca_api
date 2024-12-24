@@ -1,0 +1,6 @@
+@BackAppPersonal_HostAddress = http://localhost:5062
+
+GET {{BackAppPersonal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
