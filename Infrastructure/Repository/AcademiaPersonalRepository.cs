@@ -26,7 +26,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<AcademiaPersonal> CriarAcademiaPersonal(AcademiaPersonal academiaPersonal)
         {
-            _context.AcademiaPersonais.Add(academiaPersonal);
+            await _context.AcademiaPersonais.AddAsync(academiaPersonal);
             await _context.SaveChangesAsync();
             return academiaPersonal;
         }

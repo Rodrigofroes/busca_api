@@ -1,5 +1,6 @@
 ﻿using BackAppPersonal.Application.DTO.InputDto;
 using BackAppPersonal.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackAppPersonal.Web.Controllers
@@ -16,7 +17,8 @@ namespace BackAppPersonal.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UsuarioInput usuario)
+        [Authorize]
+        public async Task<IActionResult> Post([FromForm] UsuarioInput usuario)
         {
             try
             {
@@ -34,6 +36,7 @@ namespace BackAppPersonal.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get()
         {
             return Ok(await _usuarioService.Usuarios());
@@ -41,6 +44,7 @@ namespace BackAppPersonal.Web.Controllers
 
         [HttpGet]
         [Route("{id}")]
+        [Authorize]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             return Ok(await _usuarioService.UsuarioPorId(id));
@@ -48,12 +52,14 @@ namespace BackAppPersonal.Web.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             return Ok(await _usuarioService.DeletarUsuario(id));
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Put([FromBody] UsuarioInput usuario)
         {
             try

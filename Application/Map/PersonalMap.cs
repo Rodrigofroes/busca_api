@@ -24,7 +24,7 @@ namespace BackAppPersonal.Application.Map
         {
             return new Personal
             {
-                Id = personal.Id,
+                Id = (Guid)personal.Id,
                 Nome = personal.Nome,
                 CREF = personal.CREF,
                 Especialidades = personal.Especialidades.Select(x => x).ToList()

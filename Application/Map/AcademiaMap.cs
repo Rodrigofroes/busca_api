@@ -26,7 +26,7 @@ namespace BackAppPersonal.Application.Map
         {
             return new Academia
             {
-                Id = academia.Id,
+                Id = (Guid)academia.Id,
                 Nome = academia.Nome,
                 EnderecoId = academia.Endereco.Id,
                 Endereco = EnderecoMap.MapEndereco(academia.Endereco)

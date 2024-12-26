@@ -58,5 +58,10 @@ namespace BackAppPersonal.Infrastructure.Repository
         {
             return await _appDbContext.TipoUsuarios.FirstOrDefaultAsync(tu => tu.Id == id);
         }
+
+        public async Task<Usuario> UsuarioPorEmail(string email)
+        {
+            return await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

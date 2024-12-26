@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackAppPersonal.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialTables : Migration
+    public partial class InitialDatabse : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -116,6 +116,7 @@ namespace BackAppPersonal.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Senha = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Url = table.Column<string>(type: "character varying(999)", maxLength: 999, nullable: false),
                     PersonalId = table.Column<Guid>(type: "uuid", nullable: true),
                     TipoUsuarioId = table.Column<Guid>(type: "uuid", nullable: false),
                     AcademiaId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -147,9 +148,9 @@ namespace BackAppPersonal.Migrations
                 columns: new[] { "Id", "CreatedAt", "TIpo" },
                 values: new object[,]
                 {
-                    { new Guid("140e52dc-929f-447f-b674-46136c4cf632"), new DateTime(2024, 12, 24, 2, 57, 30, 876, DateTimeKind.Utc).AddTicks(4160), "Aluno" },
-                    { new Guid("1a60e7ea-0304-4ae4-ad57-f48284c2746b"), new DateTime(2024, 12, 24, 2, 57, 30, 876, DateTimeKind.Utc).AddTicks(4164), "Academia" },
-                    { new Guid("21960282-918e-4ce6-ba6c-49efb2c0500e"), new DateTime(2024, 12, 24, 2, 57, 30, 876, DateTimeKind.Utc).AddTicks(4166), "Personal" }
+                    { new Guid("2791072d-f6b7-4b97-bc12-555de635ad78"), new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6081), "Academia" },
+                    { new Guid("2fc3f78f-84be-437a-8f00-826b701f4768"), new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6083), "Personal" },
+                    { new Guid("b4e524ae-8b2a-4bbe-be9b-2921e9b73d7d"), new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6075), "Aluno" }
                 });
 
             migrationBuilder.CreateIndex(

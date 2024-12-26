@@ -2,11 +2,12 @@
 {
     public class UsuarioInput
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
         public PersonalInput? Personal { get; set; }
         public AcademiaInput? Academia { get; set; }
         public Guid TipoUsuario { get; set; }
+        public IFormFile Imagem { get; set; }
     }
 }

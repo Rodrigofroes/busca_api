@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackAppPersonal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241224025731_InitialTables")]
-    partial class InitialTables
+    [Migration("20241225220038_InitialDatabse")]
+    partial class InitialDatabse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,20 +177,20 @@ namespace BackAppPersonal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("140e52dc-929f-447f-b674-46136c4cf632"),
-                            CreatedAt = new DateTime(2024, 12, 24, 2, 57, 30, 876, DateTimeKind.Utc).AddTicks(4160),
+                            Id = new Guid("b4e524ae-8b2a-4bbe-be9b-2921e9b73d7d"),
+                            CreatedAt = new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6075),
                             TIpo = "Aluno"
                         },
                         new
                         {
-                            Id = new Guid("1a60e7ea-0304-4ae4-ad57-f48284c2746b"),
-                            CreatedAt = new DateTime(2024, 12, 24, 2, 57, 30, 876, DateTimeKind.Utc).AddTicks(4164),
+                            Id = new Guid("2791072d-f6b7-4b97-bc12-555de635ad78"),
+                            CreatedAt = new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6081),
                             TIpo = "Academia"
                         },
                         new
                         {
-                            Id = new Guid("21960282-918e-4ce6-ba6c-49efb2c0500e"),
-                            CreatedAt = new DateTime(2024, 12, 24, 2, 57, 30, 876, DateTimeKind.Utc).AddTicks(4166),
+                            Id = new Guid("2fc3f78f-84be-437a-8f00-826b701f4768"),
+                            CreatedAt = new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6083),
                             TIpo = "Personal"
                         });
                 });
@@ -222,6 +222,11 @@ namespace BackAppPersonal.Migrations
 
                     b.Property<Guid>("TipoUsuarioId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(999)
+                        .HasColumnType("character varying(999)");
 
                     b.HasKey("Id");
 

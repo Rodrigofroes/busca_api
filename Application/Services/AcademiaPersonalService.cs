@@ -11,13 +11,15 @@ namespace BackAppPersonal.Application.Services
     {
         private readonly IAcademiaPersonalRepository _academiaPersonalRepository;
         private readonly IAcademiaRepository _academiaRepository;
+        private readonly IEnderecoRepository _enderecoRepository;
         private readonly IPersonalRepository _personalRepository;
 
-        public AcademiaPersonalService(IAcademiaPersonalRepository academiaPersonalRepository, IAcademiaRepository academiaRepository, IPersonalRepository personalRepository)
+        public AcademiaPersonalService(IAcademiaPersonalRepository academiaPersonalRepository, IAcademiaRepository academiaRepository, IPersonalRepository personalRepository, IEnderecoRepository enderecoRepository)
         {
             _academiaPersonalRepository = academiaPersonalRepository;
             _academiaRepository = academiaRepository;
             _personalRepository = personalRepository;
+            _enderecoRepository = enderecoRepository;
         }
 
         public async Task<IEnumerable<AcademiaPersonalOutput>> AcademiaPersonals()
@@ -28,6 +30,7 @@ namespace BackAppPersonal.Application.Services
             {
                 academiaPersonal.Academia = await _academiaRepository.AcademiaPorId(academiaPersonal.AcademiaId);
                 academiaPersonal.Personal = await _personalRepository.PersonalPorId(academiaPersonal.PersonalId);
+                academiaPersonal.Academia.Endereco = await _enderecoRepository.EnderecoPorId(academiaPersonal.Academia.EnderecoId);
             }
 
             return AcademiaPersonalMap.MapAcademiaPersonal(academiaPersonals);
@@ -38,14 +41,15 @@ namespace BackAppPersonal.Application.Services
             AcademiaPersonal academiaPersonal = await _academiaPersonalRepository.AcademiaPersonalPorId(id);
             academiaPersonal.Academia = await _academiaRepository.AcademiaPorId(academiaPersonal.AcademiaId);
             academiaPersonal.Personal = await _personalRepository.PersonalPorId(academiaPersonal.PersonalId);
+            academiaPersonal.Academia.Endereco = await _enderecoRepository.EnderecoPorId(academiaPersonal.Academia.EnderecoId);
             return AcademiaPersonalMap.MapAcademiaPersonal(academiaPersonal);
         }
 
-        public async Task<AcademiaPersonalOutput> CriarAcademiaPersonal(AcademiaPersonalInput academiaPersonal)
+        public async Task<AcademiaPersonal> CriarAcademiaPersonal(AcademiaPersonalInput academiaPersonal)
         {
-            AcademiaPersonal retorno = AcademiaPersonalMap.MapAcademiaPersonal(academiaPersonal);
-            retorno = await _academiaPersonalRepository.CriarAcademiaPersonal(retorno);
-            return AcademiaPersonalMap.MapAcademiaPersonal(retorno);
+            AcademiaPersonal map = AcademiaPersonalMap.MapAcademiaPersonal(academiaPersonal);
+            AcademiaPersonal retorno = await _academiaPersonalRepository.CriarAcademiaPersonal(map);
+            return retorno;
         }
 
         public async Task<AcademiaPersonalOutput> AtualizarAcademiaPersonal(AcademiaPersonalInput academiaPersonal)

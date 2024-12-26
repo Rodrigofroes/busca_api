@@ -35,5 +35,10 @@ namespace BackAppPersonal.Utils
         {
             return guid != Guid.Empty;
         }
+
+        public bool ValidarImagem(IFormFile imagem)
+        {
+            return imagem.ContentType.Contains("image");
+        }
     }
 }

@@ -7,6 +7,7 @@ using BackAppPersonal.Domain.Exceptions;
 using BackAppPersonal.Domain.Intefaces;
 using BackAppPersonal.Infrastructure.Repository;
 using BackAppPersonal.Utils;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BackAppPersonal.Application.Services
 {
@@ -16,10 +17,11 @@ namespace BackAppPersonal.Application.Services
         private readonly IPersonalRepository _personalRepository;
         private readonly IAcademiaRepository _academiaRepository;
         public readonly IEnderecoRepository _enderecoRepository;
+        public readonly IMinioStorage _minioStorage;
         private readonly ISenhaHash _senhaHash;
         private readonly ValidadorUtils _validadorUtils;
 
-        public UsuarioService(IUsuarioRespository usuarioRepository, IPersonalRepository personalRepository, ValidadorUtils validadorUtils, ISenhaHash senhaHash, IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository)
+        public UsuarioService(IUsuarioRespository usuarioRepository, IPersonalRepository personalRepository, ValidadorUtils validadorUtils, ISenhaHash senhaHash, IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IMinioStorage minioStorage)
         {
             _personalRepository = personalRepository;
             _usuarioRepository = usuarioRepository;
@@ -27,6 +29,7 @@ namespace BackAppPersonal.Application.Services
             _senhaHash = senhaHash;
             _academiaRepository = academiaRepository;
             _enderecoRepository = enderecoRepository;
+            _minioStorage = minioStorage;
         }
 
         public async Task<IEnumerable<UsuarioOutput>> Usuarios()
@@ -58,21 +61,26 @@ namespace BackAppPersonal.Application.Services
 
         public async Task<Usuario> CriarUsuario(UsuarioInput usuario)
         {
-            //ValidarCadastro(usuario);
+            ValidarCadastro(usuario);
             Usuario map = UsuarioMap.MapUsuario(usuario);
+            string path = "";
 
-            if(usuario.Personal != null)
+            if (usuario.Personal != null)
             {
                 Personal personal = await _personalRepository.CriarPersonal(map.Personal);
                 map.PersonalId = personal.Id;
+                path = "personal";
             }
             else
             {
                 Academia academia = await _academiaRepository.CriarAcademia(map.Academia);
                 map.AcademiaId = academia.Id;
+                path = "academia";
             }
 
             map.Senha = _senhaHash.HashSenha(map.Senha);
+            string url = await UploadImagem(usuario.Imagem, path);
+            map.Url = url;
             return await _usuarioRepository.CriarUsuario(map);
 
             throw new ExceptionService(" Não foi possível criar um usuário, verifique os dados e tente novamente.");
@@ -80,7 +88,7 @@ namespace BackAppPersonal.Application.Services
 
         public async Task<Usuario> AtualizarUsuario(UsuarioInput usuario)
         {
-            ValidarAtualizacao(usuario);
+            //ValidarAtualizacao(usuario);
             Usuario map = UsuarioMap.MapUsuario(usuario);
             Personal personal = await _personalRepository.AtualizarPersonal(map.Personal);
             if (personal != null)
@@ -89,7 +97,7 @@ namespace BackAppPersonal.Application.Services
                 map.Senha = _senhaHash.HashSenha(map.Senha);
                 return await _usuarioRepository.AtualizarUsuario(map);
             }
-            throw new ExceptionService(" Não foi possível atualizar o usuário, verifique os dados e tente novamente.");
+            throw new ExceptionService("Não foi possível atualizar o usuário, verifique os dados e tente novamente.");
         }
 
         public async Task<Usuario> DeletarUsuario(Guid id)
@@ -108,14 +116,28 @@ namespace BackAppPersonal.Application.Services
 
         private void ValidarAtualizacao(UsuarioInput usuario)
         {
-            if (!_validadorUtils.ValidarGuid(usuario.Id))
+            if (!_validadorUtils.ValidarGuid((Guid)usuario.Id))
             {
                 throw new ValidationException("ID do usuário é inválido.");
             }
 
-            if (!_validadorUtils.ValidarGuid(usuario.Personal.Id))
+            if(usuario.Personal != null)
             {
-                throw new ValidationException("ID do personal é inválido.");
+                if (!_validadorUtils.ValidarGuid((Guid)usuario.Personal.Id))
+                {
+                    throw new ValidationException("ID do personal é inválido.");
+                }
+
+            }
+
+            if (usuario.Academia != null)
+            {
+                if (!_validadorUtils.ValidarGuid((Guid)usuario.Academia.Id))
+                {
+                    throw new ValidationException("ID da academia é inválido.");
+                }
+
+
             }
 
             string erro = ValidarDadosComuns(usuario);
@@ -129,10 +151,28 @@ namespace BackAppPersonal.Application.Services
         {
             if (!_validadorUtils.ValidarEmail(usuario.Email)) return "E-mail inválido.";
             if (!_validadorUtils.ValidarSenha(usuario.Senha)) return "Senha inválida.";
-            if (!_validadorUtils.ValidarCREF(usuario.Personal.CREF)) return "CREF inválido.";
-            if (!_validadorUtils.ValidarString(usuario.Personal.Nome)) return "Nome inválido.";
-            if (!_validadorUtils.ValidarLista(usuario.Personal.Especialidades)) return "Especialidades inválidas.";
+            if (!_validadorUtils.ValidarImagem(usuario.Imagem)) return "Imagem inválida.";
             return null;
+        }
+
+
+        private async Task<string> UploadImagem(IFormFile imagem, string path)
+        {
+            string bucketName = "projetobuscapersonal";
+            string type = imagem.ContentType;
+            string typeImg = type.Split('/')[1];
+            string objectName = $"{path}/{Guid.NewGuid()}.{typeImg}";
+            using (var stream = imagem.OpenReadStream())
+            {
+                string url = await _minioStorage.UploadFileAsync(bucketName, objectName, stream, type);
+                if (url != null)
+                {
+                    return url;
+                }
+
+                throw new ExceptionService("Não foi possível fazer o upload da imagem, tente novamente.");
+
+            }
         }
     }
 }

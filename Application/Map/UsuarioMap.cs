@@ -12,6 +12,7 @@ namespace BackAppPersonal.Application.Map
             {
                 Id = usuario.Id,
                 Email = usuario.Email,
+                Url = usuario.Url,
                 Personal = usuario.Personal != null ? PersonalMap.MapPersonal(usuario.Personal) : null,
                 Academia = usuario.Academia != null ? AcademiaMap.MapAcademia(usuario.Academia) : null,
                 TipoUsuario = TipoUsuarioMap.MapTipoUsuario(usuario.TipoUsuario)
@@ -27,7 +28,7 @@ namespace BackAppPersonal.Application.Map
         {
             return new Usuario
             {
-                Id = usuario.Id,
+                Id = (Guid)usuario.Id,
                 Email = usuario.Email,
                 Senha = usuario.Senha,
                 PersonalId = usuario.Personal?.Id,
