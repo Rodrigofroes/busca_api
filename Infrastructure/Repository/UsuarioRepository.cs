@@ -21,7 +21,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Usuario> UsuarioPorId(Guid id)
         {
-            return await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            return await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == new Guid(id.ToString()));
         }
 
         public async Task<Usuario> CriarUsuario(Usuario usuario)
@@ -48,7 +48,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Usuario> DeletarUsuario(Guid id)
         {
-            Usuario usuario = await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            Usuario usuario = await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == new Guid(id.ToString()));
             _appDbContext.Usuarios.Remove(usuario);
             await _appDbContext.SaveChangesAsync();
             return usuario;

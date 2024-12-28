@@ -17,6 +17,7 @@ namespace BackAppPersonal.Application.Services
 
         public async Task<IEnumerable<Endereco>> Enderecos()
         {
+
             return await _enderecoRepository.Enderecos();
         }
 

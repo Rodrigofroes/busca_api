@@ -21,7 +21,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<AcademiaPersonal> AcademiaPersonalPorId(Guid id)
         {
-            return await _context.AcademiaPersonais.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.AcademiaPersonais.FirstOrDefaultAsync(x => x.Id == new Guid(id.ToString()));
         }
 
         public async Task<AcademiaPersonal> CriarAcademiaPersonal(AcademiaPersonal academiaPersonal)
@@ -40,7 +40,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<AcademiaPersonal> DeletarAcademiaPersonal(Guid id)
         {
-            AcademiaPersonal academiaPersonal = await _context.AcademiaPersonais.FirstOrDefaultAsync(x => x.Id == id);
+            AcademiaPersonal academiaPersonal = await _context.AcademiaPersonais.FirstOrDefaultAsync(x => x.Id == new Guid(id.ToString()));
             _context.AcademiaPersonais.Remove(academiaPersonal);
             await _context.SaveChangesAsync();
             return academiaPersonal;

@@ -17,7 +17,7 @@ namespace BackAppPersonal.Application.Map
                 Especialidades = personal.Especialidades.Select(x => x).ToList()
             };
         }
-        public static List<PersonalOutput> MapPersonal(this List<Personal> personal)
+        public static IEnumerable<PersonalOutput> MapPersonal(this IEnumerable<Personal> personal)
         {
             return personal.Select(x => x.MapPersonal()).ToList();
         }
@@ -32,7 +32,7 @@ namespace BackAppPersonal.Application.Map
                 Especialidades = personal.Especialidades.Select(x => x).ToList()
             };
         }
-        public static List<Personal> MapPersonal(this List<PersonalInput> personal)
+        public static IEnumerable<Personal> MapPersonal(this IEnumerable<PersonalInput> personal)
         {
             return personal.Select(x => x.MapPersonal()).ToList();
         }

@@ -21,7 +21,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Personal> PersonalPorId(Guid id)
         {
-            return await _appDbContext.Personais.FirstOrDefaultAsync(p => p.Id == id);
+            return await _appDbContext.Personais.FirstOrDefaultAsync(p => p.Id == new Guid(id.ToString()));
         }
 
         public async Task<Personal> CriarPersonal(Personal personal)
@@ -40,7 +40,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Personal> DeletarPersonal(Guid id)
         {
-            Personal personal = await _appDbContext.Personais.FirstOrDefaultAsync(p => p.Id == id);
+            Personal personal = await _appDbContext.Personais.FirstOrDefaultAsync(p => p.Id == new Guid(id.ToString()));
             _appDbContext.Personais.Remove(personal);
             await _appDbContext.SaveChangesAsync();
             return personal;

@@ -24,7 +24,17 @@ namespace BackAppPersonal.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(PersonalInput personal)
         {
-            return Ok(await _personalService.CriarPersonal(personal));
+            try
+            {
+                var retorno = await _personalService.CriarPersonal(personal);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {
+                    message = ex.Message
+                });
+            };
         }
 
         [HttpPut]

@@ -6,6 +6,7 @@ using BackAppPersonal.Domain.Entities;
 using BackAppPersonal.Domain.Exceptions;
 using BackAppPersonal.Domain.Intefaces;
 using BackAppPersonal.Utils;
+using System.Transactions;
 
 namespace BackAppPersonal.Application.Services
 {
@@ -38,10 +39,11 @@ namespace BackAppPersonal.Application.Services
 
             foreach (var usuario in usuarios)
             {
-                if(usuario.PersonalId != null)
+                if (usuario.PersonalId != null)
                 {
                     usuario.Personal = await _personalRepository.PersonalPorId((Guid)usuario.PersonalId);
-                }else
+                }
+                else
                 {
                     usuario.Academia = await _academiaRepository.AcademiaPorId((Guid)usuario.AcademiaId);
                     usuario.Academia.Endereco = await _enderecoRepository.EnderecoPorId((Guid)usuario.Academia.EnderecoId);
@@ -57,7 +59,7 @@ namespace BackAppPersonal.Application.Services
             return UsuarioMap.MapUsuario(usuario);
         }
 
-        public async Task<Usuario> CriarUsuario(UsuarioInput usuario)
+        public async Task<UsuarioOutput> CriarUsuario(UsuarioInput usuario)
         {
             ValidarCadastro(usuario);
             Usuario map = UsuarioMap.MapUsuario(usuario);
@@ -66,101 +68,54 @@ namespace BackAppPersonal.Application.Services
 
             if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Personal)
             {
+                ValidarDadosPersonal(usuario);
                 Personal personal = await _personalRepository.CriarPersonal(map.Personal);
                 map.PersonalId = personal.Id;
                 path = "personal";
             }
             if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Academia)
             {
+                ValidarDadosAcademia(usuario);
                 Academia academia = await _academiaRepository.CriarAcademia(map.Academia);
                 map.AcademiaId = academia.Id;
                 path = "academia";
             }
-            if(map.Tipo == TipoUsuario.TipoUsuarioEnum.Aluno)
+            if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Aluno)
             {
+                ValidarAluno(usuario);
                 Aluno aluno = await _alunoRepository.CriarAluno(map.Aluno);
                 map.AlunoId = aluno.Id;
                 path = "aluno";
-                
+
             }
 
             map.Senha = _senhaHash.HashSenha(map.Senha);
             string url = await UploadImagem(usuario.Imagem, path);
             map.Url = url;
-            return await _usuarioRepository.CriarUsuario(map);
-
-            throw new ExceptionService(" Não foi possível criar um usuário, verifique os dados e tente novamente.");
+            Usuario retorno = await _usuarioRepository.CriarUsuario(map);            
+            return UsuarioMap.MapUsuario(retorno);
         }
 
-        public async Task<Usuario> AtualizarUsuario(UsuarioInput usuario)
+        public async Task<UsuarioOutput> AtualizarUsuario(UsuarioInput usuario)
         {
-            //ValidarAtualizacao(usuario);
+            ValidarAtualizacao(usuario);
             Usuario map = UsuarioMap.MapUsuario(usuario);
             Personal personal = await _personalRepository.AtualizarPersonal(map.Personal);
             if (personal != null)
             {
                 map.PersonalId = personal.Id;
                 map.Senha = _senhaHash.HashSenha(map.Senha);
-                return await _usuarioRepository.AtualizarUsuario(map);
+                Usuario retorno = await _usuarioRepository.AtualizarUsuario(map);
+                return UsuarioMap.MapUsuario(retorno);
             }
-            throw new ExceptionService("Não foi possível atualizar o usuário, verifique os dados e tente novamente.");
-        }
-
-        public async Task<Usuario> DeletarUsuario(Guid id)
-        {
-            return await _usuarioRepository.DeletarUsuario(id);
-        }
-
-        private void ValidarCadastro(UsuarioInput usuario)
-        {
-            string erro = ValidarDadosComuns(usuario);
-            if (erro != null)
-            {
-                throw new ValidationException(erro);
-            }
-        }
-
-        private void ValidarAtualizacao(UsuarioInput usuario)
-        {
-            if (!_validadorUtils.ValidarGuid((Guid)usuario.Id))
-            {
-                throw new ValidationException("ID do usuário é inválido.");
-            }
-
-            if(usuario.Personal != null)
-            {
-                if (!_validadorUtils.ValidarGuid((Guid)usuario.Personal.Id))
-                {
-                    throw new ValidationException("ID do personal é inválido.");
-                }
-
-            }
-
-            if (usuario.Academia != null)
-            {
-                if (!_validadorUtils.ValidarGuid((Guid)usuario.Academia.Id))
-                {
-                    throw new ValidationException("ID da academia é inválido.");
-                }
-
-
-            }
-
-            string erro = ValidarDadosComuns(usuario);
-            if (erro != null)
-            {
-                throw new ValidationException(erro);
-            }
-        }
-
-        private string ValidarDadosComuns(UsuarioInput usuario)
-        {
-            if (!_validadorUtils.ValidarEmail(usuario.Email)) return "E-mail inválido.";
-            if (!_validadorUtils.ValidarSenha(usuario.Senha)) return "Senha inválida.";
-            if (!_validadorUtils.ValidarImagem(usuario.Imagem)) return "Imagem inválida.";
             return null;
         }
 
+        public async Task<UsuarioOutput> DeletarUsuario(Guid id)
+        {
+            Usuario retorno = await _usuarioRepository.DeletarUsuario(id);
+            return UsuarioMap.MapUsuario(retorno);
+        }
 
         private async Task<string> UploadImagem(IFormFile imagem, string path)
         {
@@ -179,6 +134,108 @@ namespace BackAppPersonal.Application.Services
                 throw new ExceptionService("Não foi possível fazer o upload da imagem, tente novamente.");
 
             }
+        }
+
+        private void ValidarCadastro(UsuarioInput usuario)
+        {
+            string erro = ValidarDadosComuns(usuario);
+            if (erro != null)
+            {
+                throw new ValidationException(erro);
+            }
+        }
+
+        private void ValidarAtualizacao(UsuarioInput usuario)
+        {
+            if (!_validadorUtils.ValidarGuid((Guid)usuario.Id))
+            {
+                throw new ValidationException("ID do usuário é inválido.");
+            }
+            if (usuario.Personal != null)
+            {
+                if (!_validadorUtils.ValidarGuid((Guid)usuario.Personal.Id))
+                {
+                    throw new ValidationException("ID do personal é inválido.");
+                }
+                ValidarDadosPersonal(usuario);
+            }
+            if (usuario.Academia != null)
+            {
+                if (!_validadorUtils.ValidarGuid((Guid)usuario.Academia.Id))
+                {
+                    throw new ValidationException("ID da academia é inválido.");
+                }
+                ValidarDadosAcademia(usuario);
+            }
+
+            string erro = ValidarDadosComuns(usuario);
+            if (erro != null)
+            {
+                throw new ValidationException(erro);
+            }
+        }
+
+        private void ValidarDadosPersonal(UsuarioInput usuario)
+        {
+            string erro = ValidarPersonal(usuario);
+            if (erro != null)
+            {
+                throw new ValidationException(erro);
+            }
+        }
+
+        private void ValidarDadosAcademia(UsuarioInput usuario)
+        {
+            string erro = ValidarAcademia(usuario);
+            if (erro != null)
+            {
+                throw new ValidationException(erro);
+            }
+        }
+
+        private void ValidarAluno(UsuarioInput usuario)
+        {
+            string erro = ValidarDadosAluno(usuario);
+            if (erro != null)
+            {
+                throw new ValidationException(erro);
+            }
+        }
+
+        private string ValidarDadosAluno(UsuarioInput usuario)
+        {
+            if (!_validadorUtils.ValidarString(usuario.Aluno.Nome)) return "Nome é obrigatório";
+            if (!_validadorUtils.ValidarString(usuario.Aluno.Sobrenome)) return "Sobrenome é obrigatório.";
+            return null;
+        }
+
+        private string ValidarAcademia(UsuarioInput usuario)
+        {
+            if (!_validadorUtils.ValidarString(usuario.Academia.Nome)) return "Nome é obrigatório.";
+            if (!_validadorUtils.ValidarString(usuario.Academia.Endereco.Cidade)) return "Cidade é obrigatório.";
+            if (!_validadorUtils.ValidarString(usuario.Academia.Endereco.Bairro)) return "Bairro é obrigatório.";
+            if (!_validadorUtils.ValidarString(usuario.Academia.Endereco.Logradouro)) return "Logradouro é obrigatório.";
+            if (!_validadorUtils.ValidarString(usuario.Academia.Endereco.CEP)) return "CEP é obrigatório.";
+            if (!_validadorUtils.ValidarString(usuario.Academia.Endereco.UF)) return "UF é obrigatório.";
+            if (!_validadorUtils.ValidarString(usuario.Academia.Endereco.Numero)) return "Numero é obrigatório.";
+            return null;
+        }
+
+        private string ValidarPersonal(UsuarioInput personal)
+        {
+            if (!_validadorUtils.ValidarString(personal.Personal.Nome)) return "Nome é obrigatório.";
+            if (!_validadorUtils.ValidarCREF(personal.Personal.CREF)) return "CREF inválido.";
+            if (!_validadorUtils.ValidarHoraAula(personal.Personal.ValorHora)) return "Valor da hora inválido.";
+            if (!_validadorUtils.ValidarListaString(personal.Personal.Especialidades)) return "Especialidades inválidas.";
+            return null;
+        }
+
+        private string ValidarDadosComuns(UsuarioInput usuario)
+        {
+            if (!_validadorUtils.ValidarEmail(usuario.Email)) return "E-mail inválido.";
+            if (!_validadorUtils.ValidarSenha(usuario.Senha)) return "Senha inválida.";
+            if (!_validadorUtils.ValidarImagem(usuario.Imagem)) return "Imagem inválida.";
+            return null;
         }
     }
 }

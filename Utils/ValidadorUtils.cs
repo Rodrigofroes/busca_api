@@ -40,5 +40,15 @@ namespace BackAppPersonal.Utils
         {
             return imagem.ContentType.Contains("image");
         }
+
+        public bool ValidarHoraAula(decimal horaAula)
+        {
+            return horaAula >= 20.00m;
+        }
+
+        public bool ValidarListaString(List<string> lista)
+        {
+            return lista.Count > 0;
+        }
     }
 }
