@@ -48,15 +48,10 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Usuario> DeletarUsuario(Guid id)
         {
-            var usuario = await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            Usuario usuario = await _appDbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
             _appDbContext.Usuarios.Remove(usuario);
             await _appDbContext.SaveChangesAsync();
             return usuario;
-        }
-
-        public async Task<TipoUsuario> TipoUsuarioPorId(Guid id)
-        {
-            return await _appDbContext.TipoUsuarios.FirstOrDefaultAsync(tu => tu.Id == id);
         }
 
         public async Task<Usuario> UsuarioPorEmail(string email)

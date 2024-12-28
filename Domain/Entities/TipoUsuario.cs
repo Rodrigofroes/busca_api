@@ -1,7 +1,12 @@
 ﻿namespace BackAppPersonal.Domain.Entities
 {
-    public class TipoUsuario : Entity
+    public class TipoUsuario
     {
-        public string TIpo { get; set; }
+        public enum TipoUsuarioEnum
+        {
+            Aluno,
+            Personal,
+            Academia
+        }
     }
 }

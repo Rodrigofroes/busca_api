@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace BackAppPersonal.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDatabse : Migration
+    public partial class InitDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,25 +40,13 @@ namespace BackAppPersonal.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CREF = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ValorHora = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Especialidades = table.Column<List<string>>(type: "text[]", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Personais", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TipoUsuarios",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TIpo = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TipoUsuarios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,6 +67,26 @@ namespace BackAppPersonal.Migrations
                         principalTable: "Enderecos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Alunos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Nome = table.Column<string>(type: "text", nullable: false),
+                    Sobrenome = table.Column<string>(type: "text", nullable: false),
+                    PersonalId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Alunos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Alunos_Personais_PersonalId",
+                        column: x => x.PersonalId,
+                        principalTable: "Personais",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -118,8 +124,9 @@ namespace BackAppPersonal.Migrations
                     Senha = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Url = table.Column<string>(type: "character varying(999)", maxLength: 999, nullable: false),
                     PersonalId = table.Column<Guid>(type: "uuid", nullable: true),
-                    TipoUsuarioId = table.Column<Guid>(type: "uuid", nullable: false),
                     AcademiaId = table.Column<Guid>(type: "uuid", nullable: true),
+                    AlunoId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Tipo = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -131,26 +138,15 @@ namespace BackAppPersonal.Migrations
                         principalTable: "Academias",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_Usuarios_Alunos_AlunoId",
+                        column: x => x.AlunoId,
+                        principalTable: "Alunos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Usuarios_Personais_PersonalId",
                         column: x => x.PersonalId,
                         principalTable: "Personais",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Usuarios_TipoUsuarios_TipoUsuarioId",
-                        column: x => x.TipoUsuarioId,
-                        principalTable: "TipoUsuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "TipoUsuarios",
-                columns: new[] { "Id", "CreatedAt", "TIpo" },
-                values: new object[,]
-                {
-                    { new Guid("2791072d-f6b7-4b97-bc12-555de635ad78"), new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6081), "Academia" },
-                    { new Guid("2fc3f78f-84be-437a-8f00-826b701f4768"), new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6083), "Personal" },
-                    { new Guid("b4e524ae-8b2a-4bbe-be9b-2921e9b73d7d"), new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6075), "Aluno" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -169,19 +165,24 @@ namespace BackAppPersonal.Migrations
                 column: "EnderecoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Alunos_PersonalId",
+                table: "Alunos",
+                column: "PersonalId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_AcademiaId",
                 table: "Usuarios",
                 column: "AcademiaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_AlunoId",
+                table: "Usuarios",
+                column: "AlunoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_PersonalId",
                 table: "Usuarios",
                 column: "PersonalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_TipoUsuarioId",
-                table: "Usuarios",
-                column: "TipoUsuarioId");
         }
 
         /// <inheritdoc />
@@ -197,13 +198,13 @@ namespace BackAppPersonal.Migrations
                 name: "Academias");
 
             migrationBuilder.DropTable(
-                name: "Personais");
-
-            migrationBuilder.DropTable(
-                name: "TipoUsuarios");
+                name: "Alunos");
 
             migrationBuilder.DropTable(
                 name: "Enderecos");
+
+            migrationBuilder.DropTable(
+                name: "Personais");
         }
     }
 }

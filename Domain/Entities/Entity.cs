@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackAppPersonal.Domain.Entities
 {
@@ -7,7 +8,7 @@ namespace BackAppPersonal.Domain.Entities
         [Key]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Entity()
+        protected Entity()
         {
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;

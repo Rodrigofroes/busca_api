@@ -5,9 +5,7 @@ using BackAppPersonal.Application.Map;
 using BackAppPersonal.Domain.Entities;
 using BackAppPersonal.Domain.Exceptions;
 using BackAppPersonal.Domain.Intefaces;
-using BackAppPersonal.Infrastructure.Repository;
 using BackAppPersonal.Utils;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BackAppPersonal.Application.Services
 {
@@ -16,12 +14,13 @@ namespace BackAppPersonal.Application.Services
         private readonly IUsuarioRespository _usuarioRepository;
         private readonly IPersonalRepository _personalRepository;
         private readonly IAcademiaRepository _academiaRepository;
+        private readonly IAlunoRepository _alunoRepository;
         public readonly IEnderecoRepository _enderecoRepository;
         public readonly IMinioStorage _minioStorage;
         private readonly ISenhaHash _senhaHash;
         private readonly ValidadorUtils _validadorUtils;
 
-        public UsuarioService(IUsuarioRespository usuarioRepository, IPersonalRepository personalRepository, ValidadorUtils validadorUtils, ISenhaHash senhaHash, IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IMinioStorage minioStorage)
+        public UsuarioService(IUsuarioRespository usuarioRepository, IPersonalRepository personalRepository, ValidadorUtils validadorUtils, ISenhaHash senhaHash, IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IMinioStorage minioStorage, IAlunoRepository alunoRepository)
         {
             _personalRepository = personalRepository;
             _usuarioRepository = usuarioRepository;
@@ -30,6 +29,7 @@ namespace BackAppPersonal.Application.Services
             _academiaRepository = academiaRepository;
             _enderecoRepository = enderecoRepository;
             _minioStorage = minioStorage;
+            _alunoRepository = alunoRepository;
         }
 
         public async Task<IEnumerable<UsuarioOutput>> Usuarios()
@@ -46,8 +46,6 @@ namespace BackAppPersonal.Application.Services
                     usuario.Academia = await _academiaRepository.AcademiaPorId((Guid)usuario.AcademiaId);
                     usuario.Academia.Endereco = await _enderecoRepository.EnderecoPorId((Guid)usuario.Academia.EnderecoId);
                 }
-                
-                usuario.TipoUsuario = await _usuarioRepository.TipoUsuarioPorId((Guid)usuario.TipoUsuarioId);
             }
             return UsuarioMap.MapUsuario(usuarios);
         }
@@ -65,17 +63,25 @@ namespace BackAppPersonal.Application.Services
             Usuario map = UsuarioMap.MapUsuario(usuario);
             string path = "";
 
-            if (usuario.Personal != null)
+
+            if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Personal)
             {
                 Personal personal = await _personalRepository.CriarPersonal(map.Personal);
                 map.PersonalId = personal.Id;
                 path = "personal";
             }
-            else
+            if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Academia)
             {
                 Academia academia = await _academiaRepository.CriarAcademia(map.Academia);
                 map.AcademiaId = academia.Id;
                 path = "academia";
+            }
+            if(map.Tipo == TipoUsuario.TipoUsuarioEnum.Aluno)
+            {
+                Aluno aluno = await _alunoRepository.CriarAluno(map.Aluno);
+                map.AlunoId = aluno.Id;
+                path = "aluno";
+                
             }
 
             map.Senha = _senhaHash.HashSenha(map.Senha);

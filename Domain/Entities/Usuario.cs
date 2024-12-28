@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static BackAppPersonal.Domain.Entities.TipoUsuario;
 
 namespace BackAppPersonal.Domain.Entities
 {
@@ -13,9 +14,10 @@ namespace BackAppPersonal.Domain.Entities
         public string Url { get; set; }
         public Guid? PersonalId { get; set; }
         public virtual Personal? Personal { get; set; }
-        public Guid TipoUsuarioId { get; set; }
-        public virtual TipoUsuario TipoUsuario { get; set; }
         public Guid? AcademiaId { get; set; }
         public virtual Academia? Academia { get; set; }
+        public Guid? AlunoId { get; set; }
+        public virtual Aluno? Aluno { get; set; }
+        public TipoUsuarioEnum Tipo { get; set; }
     }
 }

@@ -17,7 +17,6 @@ namespace BackAppPersonal.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Post([FromForm] UsuarioInput usuario)
         {
             try
@@ -36,7 +35,6 @@ namespace BackAppPersonal.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Get()
         {
             return Ok(await _usuarioService.Usuarios());

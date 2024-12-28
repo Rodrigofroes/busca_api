@@ -40,7 +40,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Personal> DeletarPersonal(Guid id)
         {
-            var personal = await _appDbContext.Personais.FirstOrDefaultAsync(p => p.Id == id);
+            Personal personal = await _appDbContext.Personais.FirstOrDefaultAsync(p => p.Id == id);
             _appDbContext.Personais.Remove(personal);
             await _appDbContext.SaveChangesAsync();
             return personal;

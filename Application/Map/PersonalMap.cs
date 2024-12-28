@@ -13,6 +13,7 @@ namespace BackAppPersonal.Application.Map
                 Id = personal.Id,
                 Nome = personal.Nome,
                 CREF = personal.CREF,
+                ValorHora = personal.ValorHora,
                 Especialidades = personal.Especialidades.Select(x => x).ToList()
             };
         }
@@ -27,6 +28,7 @@ namespace BackAppPersonal.Application.Map
                 Id = (Guid)personal.Id,
                 Nome = personal.Nome,
                 CREF = personal.CREF,
+                ValorHora = personal.ValorHora,
                 Especialidades = personal.Especialidades.Select(x => x).ToList()
             };
         }

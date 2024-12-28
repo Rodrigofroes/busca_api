@@ -12,11 +12,12 @@ namespace BackAppPersonal.Application.Services
         private readonly IUsuarioRespository _usuarioRespository;
         private readonly IPersonalRepository _personalRepository;
         private readonly IAcademiaRepository _academiaRepository;
+        private readonly IAlunoRepository _alunoRepository;
         private readonly IJwtToken _jwtToken;
         private readonly ISenhaHash _senhaHash;
         private readonly ValidadorUtils _validadorUtils;
 
-        public AuthService(IUsuarioRespository usuarioRespository, IJwtToken jwtToken, ISenhaHash senhaHash, ValidadorUtils validadorUtils, IPersonalRepository personalRepository, IAcademiaRepository academiaRepository)
+        public AuthService(IUsuarioRespository usuarioRespository, IJwtToken jwtToken, ISenhaHash senhaHash, ValidadorUtils validadorUtils, IPersonalRepository personalRepository, IAcademiaRepository academiaRepository, IAlunoRepository alunoRepository)
         {
             _usuarioRespository = usuarioRespository;
             _jwtToken = jwtToken;
@@ -24,6 +25,7 @@ namespace BackAppPersonal.Application.Services
             _validadorUtils = validadorUtils;
             _personalRepository = personalRepository;
             _academiaRepository = academiaRepository;
+            _alunoRepository = alunoRepository;
         }
 
         public async Task<AuthOutput> Login(AuthInput auth)
@@ -32,23 +34,24 @@ namespace BackAppPersonal.Application.Services
             Usuario usuario = await _usuarioRespository.UsuarioPorEmail(auth.Email);
             if (usuario != null)
             {
-                if (usuario.TipoUsuarioId == Guid.Parse("2fc3f78f-84be-437a-8f00-826b701f4768"))
+                if (usuario.Tipo == TipoUsuario.TipoUsuarioEnum.Personal)
                 {
                     usuario.Personal = await _personalRepository.PersonalPorId((Guid)usuario.PersonalId);
                 }
+                else if (usuario.Tipo == TipoUsuario.TipoUsuarioEnum.Academia)
+                {
+                    usuario.Academia = await _academiaRepository.AcademiaPorId((Guid)usuario.AcademiaId);
+                }
                 else
                 {
-                    usuario.Academia = await _academiaRepository.AcademiaPorId((Guid)usuario.Academia.Id);
+                    usuario.Aluno = await _alunoRepository.AlunosPorId((Guid)usuario.AlunoId);
                 }
+
+                var token = _jwtToken.GerarToken(usuario);
+                return AuthMap.MapAuth(usuario, token);
             }
 
-            if (usuario == null)
-                throw new Exception("Email ou/e Senha inválido");
-            if (!_senhaHash.VerificarSenha(usuario.Senha, auth.Senha))
-                throw new Exception("Email ou/e Senha inválido");
-            var token = _jwtToken.GerarToken(usuario);
-            usuario.TipoUsuario = await _usuarioRespository.TipoUsuarioPorId(usuario.TipoUsuarioId);
-            return AuthMap.MapAuth(usuario, token);
+            throw new Exception("Email ou/e Senha inválido");
         }
 
         private bool ValidarUsuario(AuthInput usuario)

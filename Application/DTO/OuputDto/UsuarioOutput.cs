@@ -9,6 +9,7 @@ namespace BackAppPersonal.Application.DTO.OuputDto
         public string Url { get; set; }
         public PersonalOutput? Personal { get; set; }
         public AcademiaOutput? Academia { get; set; }
-        public TipoUsuarioOutput TipoUsuario { get; set; }
+        public AlunoOutput? Aluno { get; set; }
+        public string Tipo { get; set; }
     }
 }

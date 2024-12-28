@@ -1,4 +1,6 @@
-﻿using BackAppPersonal.Domain.Entities;
+﻿using BackAppPersonal.Application.DTO.InputDto;
+using BackAppPersonal.Application.Map;
+using BackAppPersonal.Domain.Entities;
 using BackAppPersonal.Domain.Intefaces;
 
 namespace BackAppPersonal.Application.Services
@@ -22,14 +24,16 @@ namespace BackAppPersonal.Application.Services
             return await _personalRepository.PersonalPorId(id);
         }
 
-        public async Task<Personal> CriarPersonal(Personal personal)
+        public async Task<Personal> CriarPersonal(PersonalInput personal)
         {
-            return await _personalRepository.CriarPersonal(personal);
+            Personal map = PersonalMap.MapPersonal(personal);
+            return await _personalRepository.CriarPersonal(map);
         }
 
-        public async Task<Personal> AtualizarPersonal(Personal personal)
+        public async Task<Personal> AtualizarPersonal(PersonalInput personal)
         {
-            return await _personalRepository.AtualizarPersonal(personal);
+            Personal map = PersonalMap.MapPersonal(personal);
+            return await _personalRepository.AtualizarPersonal(map);
         }
 
         public async Task<Personal> DeletarPersonal(Guid id)

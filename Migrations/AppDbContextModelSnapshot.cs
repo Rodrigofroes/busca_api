@@ -71,6 +71,33 @@ namespace BackAppPersonal.Migrations
                     b.ToTable("AcademiaPersonais");
                 });
 
+            modelBuilder.Entity("BackAppPersonal.Domain.Entities.Aluno", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PersonalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Sobrenome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonalId");
+
+                    b.ToTable("Alunos");
+                });
+
             modelBuilder.Entity("BackAppPersonal.Domain.Entities.Endereco", b =>
                 {
                     b.Property<Guid>("Id")
@@ -149,47 +176,12 @@ namespace BackAppPersonal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<decimal>("ValorHora")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Personais");
-                });
-
-            modelBuilder.Entity("BackAppPersonal.Domain.Entities.TipoUsuario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TIpo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TipoUsuarios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b4e524ae-8b2a-4bbe-be9b-2921e9b73d7d"),
-                            CreatedAt = new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6075),
-                            TIpo = "Aluno"
-                        },
-                        new
-                        {
-                            Id = new Guid("2791072d-f6b7-4b97-bc12-555de635ad78"),
-                            CreatedAt = new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6081),
-                            TIpo = "Academia"
-                        },
-                        new
-                        {
-                            Id = new Guid("2fc3f78f-84be-437a-8f00-826b701f4768"),
-                            CreatedAt = new DateTime(2024, 12, 25, 22, 0, 37, 701, DateTimeKind.Utc).AddTicks(6083),
-                            TIpo = "Personal"
-                        });
                 });
 
             modelBuilder.Entity("BackAppPersonal.Domain.Entities.Usuario", b =>
@@ -199,6 +191,9 @@ namespace BackAppPersonal.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("AcademiaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AlunoId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -217,8 +212,8 @@ namespace BackAppPersonal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid>("TipoUsuarioId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -229,9 +224,9 @@ namespace BackAppPersonal.Migrations
 
                     b.HasIndex("AcademiaId");
 
-                    b.HasIndex("PersonalId");
+                    b.HasIndex("AlunoId");
 
-                    b.HasIndex("TipoUsuarioId");
+                    b.HasIndex("PersonalId");
 
                     b.ToTable("Usuarios");
                 });
@@ -266,27 +261,34 @@ namespace BackAppPersonal.Migrations
                     b.Navigation("Personal");
                 });
 
+            modelBuilder.Entity("BackAppPersonal.Domain.Entities.Aluno", b =>
+                {
+                    b.HasOne("BackAppPersonal.Domain.Entities.Personal", "Personal")
+                        .WithMany()
+                        .HasForeignKey("PersonalId");
+
+                    b.Navigation("Personal");
+                });
+
             modelBuilder.Entity("BackAppPersonal.Domain.Entities.Usuario", b =>
                 {
                     b.HasOne("BackAppPersonal.Domain.Entities.Academia", "Academia")
                         .WithMany()
                         .HasForeignKey("AcademiaId");
 
+                    b.HasOne("BackAppPersonal.Domain.Entities.Aluno", "Aluno")
+                        .WithMany()
+                        .HasForeignKey("AlunoId");
+
                     b.HasOne("BackAppPersonal.Domain.Entities.Personal", "Personal")
                         .WithMany()
                         .HasForeignKey("PersonalId");
 
-                    b.HasOne("BackAppPersonal.Domain.Entities.TipoUsuario", "TipoUsuario")
-                        .WithMany()
-                        .HasForeignKey("TipoUsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Academia");
 
-                    b.Navigation("Personal");
+                    b.Navigation("Aluno");
 
-                    b.Navigation("TipoUsuario");
+                    b.Navigation("Personal");
                 });
 #pragma warning restore 612, 618
         }

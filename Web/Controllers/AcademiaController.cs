@@ -31,22 +31,55 @@ namespace BackAppPersonal.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<Academia> Post([FromBody] AcademiaInput academia)
+        public async Task<IActionResult> Post([FromBody] AcademiaInput academia)
         {
-            return await _academiaService.CriarAcademia(academia);
+            try
+            {
+                var result = await _academiaService.CriarAcademia(academia);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
         }
 
         [HttpPut]
-        public async Task<Academia> Put([FromBody] AcademiaInput academia)
+        public async Task<IActionResult> Put([FromBody] AcademiaInput academia)
         {
-            return await _academiaService.AtualizarAcademia(academia);
+            try
+            {
+                var result = await _academiaService.AtualizarAcademia(academia);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<Academia> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            return await _academiaService.DeletarAcademia(id);
+            try
+            {
+                var result = await _academiaService.DeletarAcademia(id);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
         }
     }
 }

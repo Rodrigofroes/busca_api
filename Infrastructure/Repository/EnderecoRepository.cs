@@ -40,7 +40,7 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Endereco> DeletarEndereco(Guid id)
         {
-            var endereco = await _context.Enderecos.FirstOrDefaultAsync(x => x.Id == new Guid(id.ToString()));
+            Endereco endereco = await _context.Enderecos.FirstOrDefaultAsync(x => x.Id == new Guid(id.ToString()));
             _context.Enderecos.Remove(endereco);
             await _context.SaveChangesAsync();
             return endereco;

@@ -9,7 +9,6 @@ namespace BackAppPersonal.Domain.Intefaces
         Task<Usuario> CriarUsuario(Usuario usuario);
         Task<Usuario> AtualizarUsuario(Usuario usuario);
         Task<Usuario> DeletarUsuario(Guid id);
-        Task<TipoUsuario> TipoUsuarioPorId(Guid id);
         Task<Usuario> UsuarioPorEmail(string email);
     }
 }

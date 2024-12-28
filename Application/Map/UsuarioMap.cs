@@ -1,6 +1,7 @@
 ﻿using BackAppPersonal.Application.DTO.InputDto;
 using BackAppPersonal.Application.DTO.OuputDto;
 using BackAppPersonal.Domain.Entities;
+using static BackAppPersonal.Domain.Entities.TipoUsuario;
 
 namespace BackAppPersonal.Application.Map
 {
@@ -15,7 +16,7 @@ namespace BackAppPersonal.Application.Map
                 Url = usuario.Url,
                 Personal = usuario.Personal != null ? PersonalMap.MapPersonal(usuario.Personal) : null,
                 Academia = usuario.Academia != null ? AcademiaMap.MapAcademia(usuario.Academia) : null,
-                TipoUsuario = TipoUsuarioMap.MapTipoUsuario(usuario.TipoUsuario)
+                Tipo = usuario.Tipo.ToString()
             };
         }
 
@@ -35,8 +36,7 @@ namespace BackAppPersonal.Application.Map
                 AcademiaId = usuario.Academia?.Id,
                 Academia = usuario.Academia != null ? AcademiaMap.MapAcademia(usuario.Academia) : null,
                 Personal = usuario.Personal != null ? PersonalMap.MapPersonal(usuario.Personal) : null,
-                TipoUsuarioId = usuario.TipoUsuario
-
+                Tipo = Enum.Parse<TipoUsuarioEnum>(usuario.Tipo)
             };
         }
 
