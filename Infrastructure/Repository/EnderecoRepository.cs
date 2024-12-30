@@ -27,7 +27,7 @@ namespace BackAppPersonal.Infrastructure.Repository
         public async Task<Endereco> CriarEndereco(Endereco endereco)
         {
             _context.Enderecos.Add(endereco);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return endereco;
         }
 

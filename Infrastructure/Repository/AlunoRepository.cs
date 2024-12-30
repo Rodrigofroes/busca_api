@@ -25,9 +25,9 @@ namespace BackAppPersonal.Infrastructure.Repository
 
         public async Task<Aluno> CriarAluno(Aluno aluno)
         {
-            await _context.Alunos.AddAsync(aluno);
-            await _context.SaveChangesAsync();
-            return aluno;
+                _context.Alunos.Add(aluno);
+                _context.SaveChanges();
+                return aluno;
         }
 
         public async Task<Aluno> AtualizarAluno(Aluno aluno)

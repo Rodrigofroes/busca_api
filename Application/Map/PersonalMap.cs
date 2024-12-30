@@ -12,6 +12,8 @@ namespace BackAppPersonal.Application.Map
             {
                 Id = personal.Id,
                 Nome = personal.Nome,
+                Sobrenome = personal.Sobrenome,
+                Telefone = personal.Telefone,
                 CREF = personal.CREF,
                 ValorHora = personal.ValorHora,
                 Especialidades = personal.Especialidades.Select(x => x).ToList()
@@ -25,8 +27,9 @@ namespace BackAppPersonal.Application.Map
         {
             return new Personal
             {
-                Id = (Guid)personal.Id,
                 Nome = personal.Nome,
+                Sobrenome = personal.Sobrenome,
+                Telefone = personal.Telefone,
                 CREF = personal.CREF,
                 ValorHora = personal.ValorHora,
                 Especialidades = personal.Especialidades.Select(x => x).ToList()

@@ -26,7 +26,6 @@ namespace BackAppPersonal.Application.Map
         {
             return new Aluno
             {
-                Id = (Guid)aluno.Id,
                 Nome = aluno.Nome,
                 Sobrenome = aluno.Sobrenome,
                 PersonalId = aluno.PersonalId != null ? aluno.PersonalId : null,
@@ -37,7 +36,6 @@ namespace BackAppPersonal.Application.Map
         {
             return new Aluno
             {
-                Id = aluno.Id,
                 Nome = aluno.Nome,
                 Sobrenome = aluno.Sobrenome,
                 PersonalId = aluno.Personal.Id,

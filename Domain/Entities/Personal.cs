@@ -9,6 +9,10 @@ namespace BackAppPersonal.Domain.Entities
         [StringLength(100)]
         public string Nome { get; set; }
         [StringLength(100)]
+        public string Sobrenome { get; set; }
+        [StringLength(100)]
+        public string Telefone { get; set; }
+        [StringLength(100)]
         public string CREF { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal ValorHora { get; set; }

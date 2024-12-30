@@ -25,7 +25,6 @@ namespace BackAppPersonal.Application.Map
         {
             return new AcademiaPersonal
             {
-                Id = academiaPersonal.Id,
                 AcademiaId = academiaPersonal.AcademiaId,
                 PersonalId = academiaPersonal.PersonalId
             };

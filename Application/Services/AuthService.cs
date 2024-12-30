@@ -12,12 +12,13 @@ namespace BackAppPersonal.Application.Services
         private readonly IUsuarioRespository _usuarioRespository;
         private readonly IPersonalRepository _personalRepository;
         private readonly IAcademiaRepository _academiaRepository;
+        private readonly IEnderecoRepository _enderecoRepository;
         private readonly IAlunoRepository _alunoRepository;
         private readonly IJwtToken _jwtToken;
         private readonly ISenhaHash _senhaHash;
         private readonly ValidadorUtils _validadorUtils;
 
-        public AuthService(IUsuarioRespository usuarioRespository, IJwtToken jwtToken, ISenhaHash senhaHash, ValidadorUtils validadorUtils, IPersonalRepository personalRepository, IAcademiaRepository academiaRepository, IAlunoRepository alunoRepository)
+        public AuthService(IUsuarioRespository usuarioRespository, IJwtToken jwtToken, ISenhaHash senhaHash, ValidadorUtils validadorUtils, IPersonalRepository personalRepository, IAcademiaRepository academiaRepository, IAlunoRepository alunoRepository, IEnderecoRepository enderecoRepository)
         {
             _usuarioRespository = usuarioRespository;
             _jwtToken = jwtToken;
@@ -26,6 +27,7 @@ namespace BackAppPersonal.Application.Services
             _personalRepository = personalRepository;
             _academiaRepository = academiaRepository;
             _alunoRepository = alunoRepository;
+            _enderecoRepository = enderecoRepository;
         }
 
         public async Task<AuthOutput> Login(AuthInput auth)
@@ -41,6 +43,7 @@ namespace BackAppPersonal.Application.Services
                 else if (usuario.Tipo == TipoUsuario.TipoUsuarioEnum.Academia)
                 {
                     usuario.Academia = await _academiaRepository.AcademiaPorId((Guid)usuario.AcademiaId);
+                    usuario.Academia.Endereco = await _enderecoRepository.EnderecoPorId((Guid)usuario.Academia.EnderecoId);
                 }
                 else
                 {

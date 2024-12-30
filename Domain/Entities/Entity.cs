@@ -6,7 +6,7 @@ namespace BackAppPersonal.Domain.Entities
     public abstract class Entity
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
         public DateTime CreatedAt { get; set; }
         protected Entity()
         {

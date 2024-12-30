@@ -16,6 +16,7 @@ namespace BackAppPersonal.Application.Map
                 Url = usuario.Url,
                 Personal = usuario.Personal != null ? PersonalMap.MapPersonal(usuario.Personal) : null,
                 Academia = usuario.Academia != null ? AcademiaMap.MapAcademia(usuario.Academia) : null,
+                Aluno = usuario.Aluno != null ? AlunoMap.MapAluno(usuario.Aluno) : null,
                 Tipo = usuario.Tipo.ToString()
             };
         }
@@ -29,13 +30,13 @@ namespace BackAppPersonal.Application.Map
         {
             return new Usuario
             {
-                Id = (Guid)usuario.Id,
                 Email = usuario.Email,
                 Senha = usuario.Senha,
                 PersonalId = usuario.Personal?.Id,
                 AcademiaId = usuario.Academia?.Id,
                 Academia = usuario.Academia != null ? AcademiaMap.MapAcademia(usuario.Academia) : null,
                 Personal = usuario.Personal != null ? PersonalMap.MapPersonal(usuario.Personal) : null,
+                Aluno = usuario.Aluno != null ? AlunoMap.MapAluno(usuario.Aluno) : null,
                 Tipo = Enum.Parse<TipoUsuarioEnum>(usuario.Tipo)
             };
         }

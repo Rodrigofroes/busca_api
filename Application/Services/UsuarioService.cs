@@ -76,6 +76,8 @@ namespace BackAppPersonal.Application.Services
             if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Academia)
             {
                 ValidarDadosAcademia(usuario);
+                Endereco endereco = await _enderecoRepository.CriarEndereco(map.Academia.Endereco);
+                map.Academia.EnderecoId = endereco.Id;
                 Academia academia = await _academiaRepository.CriarAcademia(map.Academia);
                 map.AcademiaId = academia.Id;
                 path = "academia";

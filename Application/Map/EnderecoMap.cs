@@ -32,7 +32,6 @@ namespace BackAppPersonal.Application.Map
         {
             return new Endereco
             {
-                Id = endereco.Id,
                 Logradouro = endereco.Logradouro,
                 Numero = endereco.Numero,
                 Complemento = endereco.Complemento,
