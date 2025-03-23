@@ -13,7 +13,8 @@ namespace BackAppPersonal.Application.Map
                 Id = aluno.Id,
                 Nome = aluno.Nome,
                 Sobrenome = aluno.Sobrenome,
-                Personal = aluno.Personal != null ? PersonalMap.MapPersonal(aluno.Personal) : null
+                Personal = aluno.Personal != null ? PersonalMap.MapPersonal(aluno.Personal) : null,
+                Foto = aluno.Url
             };
         }
 

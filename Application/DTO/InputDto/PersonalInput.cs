@@ -9,6 +9,7 @@
         public string CREF { get; set; }
         public decimal ValorHora { get; set; } 
         public List<string> Especialidades { get; set; }
-
+        public string Sexo { get; set; }
+        public IFormFile Foto { get; set; }
     }
 }

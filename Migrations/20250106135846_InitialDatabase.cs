@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackAppPersonal.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDatabase : Migration
+    public partial class InitialDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace BackAppPersonal.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Logradouro = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Numero = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Complemento = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Complemento = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Bairro = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Cidade = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     UF = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -39,9 +39,14 @@ namespace BackAppPersonal.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Sobrenome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Telefone = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CREF = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ValorHora = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Especialidades = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Sexo = table.Column<int>(type: "integer", nullable: false),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    Url = table.Column<string>(type: "character varying(999)", maxLength: 999, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -56,6 +61,7 @@ namespace BackAppPersonal.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     EnderecoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Url = table.Column<string>(type: "character varying(999)", maxLength: 999, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -76,6 +82,7 @@ namespace BackAppPersonal.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "text", nullable: false),
                     Sobrenome = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "character varying(999)", maxLength: 999, nullable: false),
                     PersonalId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -122,8 +129,7 @@ namespace BackAppPersonal.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Senha = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Url = table.Column<string>(type: "character varying(999)", maxLength: 999, nullable: false),
-                    PersonalId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PersonalId = table.Column<Guid>(type: "uuid", maxLength: 999, nullable: true),
                     AcademiaId = table.Column<Guid>(type: "uuid", nullable: true),
                     AlunoId = table.Column<Guid>(type: "uuid", nullable: true),
                     Tipo = table.Column<int>(type: "integer", nullable: false),

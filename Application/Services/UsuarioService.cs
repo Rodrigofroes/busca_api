@@ -17,11 +17,12 @@ namespace BackAppPersonal.Application.Services
         private readonly IAcademiaRepository _academiaRepository;
         private readonly IAlunoRepository _alunoRepository;
         public readonly IEnderecoRepository _enderecoRepository;
+        public readonly EnderecoService _enderecoService;
         public readonly IMinioStorage _minioStorage;
         private readonly ISenhaHash _senhaHash;
         private readonly ValidadorUtils _validadorUtils;
 
-        public UsuarioService(IUsuarioRespository usuarioRepository, IPersonalRepository personalRepository, ValidadorUtils validadorUtils, ISenhaHash senhaHash, IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IMinioStorage minioStorage, IAlunoRepository alunoRepository)
+        public UsuarioService(IUsuarioRespository usuarioRepository, IPersonalRepository personalRepository, ValidadorUtils validadorUtils, ISenhaHash senhaHash, IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IMinioStorage minioStorage, IAlunoRepository alunoRepository, EnderecoService enderecoService)
         {
             _personalRepository = personalRepository;
             _usuarioRepository = usuarioRepository;
@@ -31,6 +32,7 @@ namespace BackAppPersonal.Application.Services
             _enderecoRepository = enderecoRepository;
             _minioStorage = minioStorage;
             _alunoRepository = alunoRepository;
+            _enderecoService = enderecoService;
         }
 
         public async Task<IEnumerable<UsuarioOutput>> Usuarios()
@@ -42,6 +44,14 @@ namespace BackAppPersonal.Application.Services
                 if (usuario.PersonalId != null)
                 {
                     usuario.Personal = await _personalRepository.PersonalPorId((Guid)usuario.PersonalId);
+                }
+                else if (usuario.AlunoId != null)
+                {
+                    usuario.Aluno = await _alunoRepository.AlunosPorId((Guid)usuario.AlunoId);
+                    if(usuario.Aluno.PersonalId != null)
+                    {
+                        usuario.Aluno.Personal = await _personalRepository.PersonalPorId((Guid)usuario.Aluno.PersonalId);
+                    }
                 }
                 else
                 {
@@ -65,35 +75,37 @@ namespace BackAppPersonal.Application.Services
             Usuario map = UsuarioMap.MapUsuario(usuario);
             string path = "";
 
-
             if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Personal)
             {
                 ValidarDadosPersonal(usuario);
+                path = "personal";
+                string url = await UploadImagem(usuario.Personal.Foto, path);
+                map.Personal.Url = url;
                 Personal personal = await _personalRepository.CriarPersonal(map.Personal);
                 map.PersonalId = personal.Id;
-                path = "personal";
             }
             if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Academia)
             {
                 ValidarDadosAcademia(usuario);
-                Endereco endereco = await _enderecoRepository.CriarEndereco(map.Academia.Endereco);
+                path = "academia";
+                string url = await UploadImagem(usuario.Academia.Foto, path);
+                map.Academia.Url = url;
+                Endereco endereco = await _enderecoService.CriarEndereco(map.Academia.Endereco);
                 map.Academia.EnderecoId = endereco.Id;
                 Academia academia = await _academiaRepository.CriarAcademia(map.Academia);
                 map.AcademiaId = academia.Id;
-                path = "academia";
             }
             if (map.Tipo == TipoUsuario.TipoUsuarioEnum.Aluno)
             {
                 ValidarAluno(usuario);
+                path = "aluno";
+                string url = await UploadImagem(usuario.Aluno.Foto, path);
+                map.Aluno.Url = url;
                 Aluno aluno = await _alunoRepository.CriarAluno(map.Aluno);
                 map.AlunoId = aluno.Id;
-                path = "aluno";
-
             }
 
             map.Senha = _senhaHash.HashSenha(map.Senha);
-            string url = await UploadImagem(usuario.Imagem, path);
-            map.Url = url;
             Usuario retorno = await _usuarioRepository.CriarUsuario(map);            
             return UsuarioMap.MapUsuario(retorno);
         }
@@ -236,7 +248,7 @@ namespace BackAppPersonal.Application.Services
         {
             if (!_validadorUtils.ValidarEmail(usuario.Email)) return "E-mail inválido.";
             if (!_validadorUtils.ValidarSenha(usuario.Senha)) return "Senha inválida.";
-            if (!_validadorUtils.ValidarImagem(usuario.Imagem)) return "Imagem inválida.";
+            //if (!_validadorUtils.ValidarImagem(usuario.Imagem)) return "Imagem inválida.";
             return null;
         }
     }

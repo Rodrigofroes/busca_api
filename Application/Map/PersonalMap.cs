@@ -1,6 +1,9 @@
 ﻿using BackAppPersonal.Application.DTO.InputDto;
 using BackAppPersonal.Application.DTO.OuputDto;
 using BackAppPersonal.Domain.Entities;
+using static BackAppPersonal.Domain.Entities.TipoUsuario;
+using static BackAppPersonal.Domain.Entities.TipoSexo;
+
 
 namespace BackAppPersonal.Application.Map
 {
@@ -16,7 +19,10 @@ namespace BackAppPersonal.Application.Map
                 Telefone = personal.Telefone,
                 CREF = personal.CREF,
                 ValorHora = personal.ValorHora,
-                Especialidades = personal.Especialidades.Select(x => x).ToList()
+                Especialidades = personal.Especialidades.Select(x => x).ToList(),
+                Sexo = personal.Sexo.ToString(),
+                Ativo = personal.Ativo,
+                Foto = personal.Url
             };
         }
         public static IEnumerable<PersonalOutput> MapPersonal(this IEnumerable<Personal> personal)
@@ -32,7 +38,8 @@ namespace BackAppPersonal.Application.Map
                 Telefone = personal.Telefone,
                 CREF = personal.CREF,
                 ValorHora = personal.ValorHora,
-                Especialidades = personal.Especialidades.Select(x => x).ToList()
+                Especialidades = personal.Especialidades.Select(x => x).ToList(),
+                Sexo = Enum.Parse<TipoSexoEnum>(personal.Sexo)
             };
         }
         public static IEnumerable<Personal> MapPersonal(this IEnumerable<PersonalInput> personal)

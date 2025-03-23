@@ -6,6 +6,7 @@
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public Guid? PersonalId { get; set; }
+        public IFormFile Foto { get; set; }
     }
 
 }

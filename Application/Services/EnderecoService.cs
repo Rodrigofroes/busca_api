@@ -30,7 +30,8 @@ namespace BackAppPersonal.Application.Services
         {
             string logradouro = $"{endereco.Logradouro + "," + endereco.Cidade}";
             List<OpenStreetMapResponse> openStreetMapResponse = await _openStreetMap.ConsultarLogradouro(logradouro);
-            Console.WriteLine(openStreetMapResponse);
+            endereco.Longitude = openStreetMapResponse[0].Lon;
+            endereco.Latitude = openStreetMapResponse[0].Lat;
             return await _enderecoRepository.CriarEndereco(endereco);
         }
 

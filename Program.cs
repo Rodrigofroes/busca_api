@@ -35,6 +35,7 @@ builder.Services.AddScoped<ValidadorUtils>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<AcademiaService>();
 builder.Services.AddScoped<PersonalService>();
+builder.Services.AddScoped<EnderecoService>();
 builder.Services.AddScoped<AcademiaPersonalService>();
 builder.Services.AddScoped<AuthService>();
 // Configuração do Minio
