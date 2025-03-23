@@ -6,7 +6,6 @@ namespace BackAppPersonal.Application.DTO.OuputDto
     {
         public Guid Id { get; set; }
         public string Email { get; set; }
-        public string Url { get; set; }
         public PersonalOutput? Personal { get; set; }
         public AcademiaOutput? Academia { get; set; }
         public AlunoOutput? Aluno { get; set; }

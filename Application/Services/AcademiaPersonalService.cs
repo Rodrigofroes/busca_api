@@ -65,6 +65,19 @@ namespace BackAppPersonal.Application.Services
             return AcademiaPersonalMap.MapAcademiaPersonal(retorno);
         }
 
+        public async Task<AcademiaPersonalFiltroOutput> AcademiaPersonalPorAcademia(Guid id)
+        {
+            IEnumerable<AcademiaPersonal> academiaPersonals = await _academiaPersonalRepository.AcademiaPersonalPorAcademia(id);
+            Academia academia = await _academiaRepository.AcademiaPorId(id);
+            Endereco endereco = await _enderecoRepository.EnderecoPorId(academia.EnderecoId);
+
+            foreach (var acad in academiaPersonals)
+            {
+                acad.Personal = await _personalRepository.PersonalPorId(acad.PersonalId);
+            }
+
+            return AcademiaPersonalMap.AcademiaPersonalFiltroOutput(academiaPersonals, academia, endereco);
+        }
 
     }
 }

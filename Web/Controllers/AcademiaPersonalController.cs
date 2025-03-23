@@ -9,7 +9,7 @@ namespace BackAppPersonal.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AcademiaPersonalController
+    public class AcademiaPersonalController : ControllerBase
     {
         private readonly AcademiaPersonalService _academiaPersonalService;
 
@@ -19,7 +19,6 @@ namespace BackAppPersonal.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IEnumerable<AcademiaPersonalOutput>> AcademiaPersonals()
         {
             return await _academiaPersonalService.AcademiaPersonals();
@@ -50,6 +49,24 @@ namespace BackAppPersonal.Web.Controllers
         public async Task<AcademiaPersonalOutput> DeletarAcademiaPersonal(Guid id)
         {
             return await _academiaPersonalService.DeletarAcademiaPersonal(id);
+        }
+
+        [HttpGet]
+        [Route("academia/{id}")]
+        public async Task<IActionResult> FiltrarPorAcademia(Guid id)
+        {
+            try
+            {
+                var retorno = await _academiaPersonalService.AcademiaPersonalPorAcademia(id);
+                return Ok(retorno);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
         }
     }
 }

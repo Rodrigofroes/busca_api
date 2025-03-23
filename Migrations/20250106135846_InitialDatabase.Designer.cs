@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackAppPersonal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241230143614_AddColumsPersonal")]
-    partial class AddColumsPersonal
+    [Migration("20250106135846_InitialDatabase")]
+    partial class InitialDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,11 @@ namespace BackAppPersonal.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(999)
+                        .HasColumnType("character varying(999)");
 
                     b.HasKey("Id");
 
@@ -94,6 +99,11 @@ namespace BackAppPersonal.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(999)
+                        .HasColumnType("character varying(999)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PersonalId");
@@ -123,7 +133,6 @@ namespace BackAppPersonal.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("Complemento")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -162,6 +171,9 @@ namespace BackAppPersonal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("CREF")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -179,6 +191,9 @@ namespace BackAppPersonal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int>("Sexo")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Sobrenome")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -188,6 +203,11 @@ namespace BackAppPersonal.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(999)
+                        .HasColumnType("character varying(999)");
 
                     b.Property<decimal>("ValorHora")
                         .HasColumnType("decimal(18,2)");
@@ -218,6 +238,7 @@ namespace BackAppPersonal.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<Guid?>("PersonalId")
+                        .HasMaxLength(999)
                         .HasColumnType("uuid");
 
                     b.Property<string>("Senha")
@@ -227,11 +248,6 @@ namespace BackAppPersonal.Migrations
 
                     b.Property<int>("Tipo")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(999)
-                        .HasColumnType("character varying(999)");
 
                     b.HasKey("Id");
 

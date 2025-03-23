@@ -11,7 +11,6 @@ namespace BackAppPersonal.Domain.Entities
         [StringLength(100)]
         public string Senha { get; set; }
         [StringLength(999)]
-        public string Url { get; set; }
         public Guid? PersonalId { get; set; }
         public virtual Personal? Personal { get; set; }
         public Guid? AcademiaId { get; set; }

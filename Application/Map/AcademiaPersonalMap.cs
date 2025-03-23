@@ -34,5 +34,22 @@ namespace BackAppPersonal.Application.Map
         {
             return academiaPersonal.Select(x => x.MapAcademiaPersonal()).ToList();
         }
+
+        public static AcademiaPersonalFiltroOutput AcademiaPersonalFiltroOutput(IEnumerable<AcademiaPersonal> academiaPersonals, Academia academia, Endereco endereco)
+        {
+            return new AcademiaPersonalFiltroOutput
+            {
+                Id = academia.Id,
+                Academia = AcademiaMap.MapAcademia(academia),
+                Personal = academiaPersonals
+                    .Select(ap => PersonalMap.MapPersonal(ap.Personal))
+                    .ToList()
+            };
+        }
+
+        public static List<AcademiaPersonalFiltroOutput> AcademiaPersonalFiltroOutput(this List<AcademiaPersonal> academiaPersonal)
+        {
+            return academiaPersonal.Select(x => AcademiaPersonalFiltroOutput(new List<AcademiaPersonal> { x }, x.Academia, x.Academia.Endereco)).ToList();
+        }
     }
 }

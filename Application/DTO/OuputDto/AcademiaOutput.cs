@@ -9,5 +9,6 @@ namespace BackAppPersonal.Application.DTO.OuputDto
         public string Nome { get; set; }
         public DateTime DataCriacao { get; set; }
         public EnderecoOutput Endereco { get; set; }
+        public string Foto { get; set; }
     }
 }

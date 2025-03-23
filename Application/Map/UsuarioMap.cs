@@ -13,7 +13,6 @@ namespace BackAppPersonal.Application.Map
             {
                 Id = usuario.Id,
                 Email = usuario.Email,
-                Url = usuario.Url,
                 Personal = usuario.Personal != null ? PersonalMap.MapPersonal(usuario.Personal) : null,
                 Academia = usuario.Academia != null ? AcademiaMap.MapAcademia(usuario.Academia) : null,
                 Aluno = usuario.Aluno != null ? AlunoMap.MapAluno(usuario.Aluno) : null,

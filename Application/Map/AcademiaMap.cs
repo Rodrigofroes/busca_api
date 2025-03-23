@@ -14,6 +14,7 @@ namespace BackAppPersonal.Application.Map
                 Nome = academia.Nome,
                 DataCriacao = academia.CreatedAt,
                 Endereco =  EnderecoMap.MapEndereco(academia.Endereco),
+                Foto = academia.Url
             };
         }
 
