@@ -50,5 +50,10 @@ namespace BackAppPersonal.Infrastructure.Repository
         {
             return await _context.AcademiaPersonais.Where(x => x.AcademiaId == id).ToListAsync();
         }
+
+        public async Task<IEnumerable<AcademiaPersonal>> AcademiaPersonalPorNome(string nome)
+        {
+            return await _context.AcademiaPersonais.Where(x => x.Academia.Nome.Contains(nome)).ToListAsync();
+        }
     }
 }

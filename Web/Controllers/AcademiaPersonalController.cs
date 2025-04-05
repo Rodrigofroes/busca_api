@@ -68,5 +68,23 @@ namespace BackAppPersonal.Web.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        [Route("academia/nome/{nome}")]
+        public async Task<IActionResult> FiltrarPorAcademiaNome(string nome)
+        {
+            try
+            {
+                var retorno = await _academiaPersonalService.AcademiaPersonalPorAcademiaNome(nome);
+                return Ok(retorno);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace BackAppPersonal.Domain.Intefaces
         Task<AcademiaPersonal> AtualizarAcademiaPersonal(AcademiaPersonal academiaPersonal);
         Task<AcademiaPersonal> DeletarAcademiaPersonal(Guid id);
         Task<IEnumerable<AcademiaPersonal>> AcademiaPersonalPorAcademia(Guid id);
+        Task<IEnumerable<AcademiaPersonal>> AcademiaPersonalPorNome(string nome);
     }
 }
