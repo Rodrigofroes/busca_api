@@ -107,12 +107,12 @@ builder.Services.AddAuthentication("Bearer")
 var app = builder.Build();
 
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minha API V1");
+    c.RoutePrefix = "swagger"; // ou "" para abrir diretamente em "/"
+});
 
 app.UseHttpsRedirection();
 app.UseCors(corsPolicyName);
