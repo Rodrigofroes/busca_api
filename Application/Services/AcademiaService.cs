@@ -6,6 +6,7 @@ using BackAppPersonal.Application.Map;
 using BackAppPersonal.Domain.Entities;
 using BackAppPersonal.Domain.Exceptions;
 using BackAppPersonal.Domain.Intefaces;
+using BackAppPersonal.Infrastructure.Repository;
 using BackAppPersonal.Utils;
 
 namespace BackAppPersonal.Application.Services
@@ -14,13 +15,15 @@ namespace BackAppPersonal.Application.Services
     {
         private readonly IAcademiaRepository _academiaRepository;
         private readonly IEnderecoRepository _enderecoRepository;
+        private readonly IPersonalRepository _personalRepository;
         private readonly ValidadorUtils _validadorUtils;
         private readonly IOpenStreetMap _openStreetMap;
 
-        public AcademiaService(IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IOpenStreetMap openStreetMap, ValidadorUtils validadorUtils)
+        public AcademiaService(IAcademiaRepository academiaRepository, IEnderecoRepository enderecoRepository, IOpenStreetMap openStreetMap, ValidadorUtils validadorUtils, IPersonalRepository personalRepository)
         {
             _academiaRepository = academiaRepository;
             _enderecoRepository = enderecoRepository;
+            _personalRepository = personalRepository;
             _openStreetMap = openStreetMap;
             _validadorUtils = validadorUtils;
         }
@@ -90,6 +93,18 @@ namespace BackAppPersonal.Application.Services
             Academia academia = await _academiaRepository.DeletarAcademia(id);
             academia.Endereco = await _enderecoRepository.DeletarEndereco(academia.EnderecoId);
             return AcademiaMap.MapAcademia(academia);
+        }
+
+        public async Task<IEnumerable<AcademiaOutput>> AcademiaPersonalPorAcademiaNome(string nome)
+        {
+            IEnumerable<Academia> academias = await _academiaRepository.AcademiaPorNome(nome);
+
+            foreach (var academia in academias)
+            {
+                academia.Endereco = await _enderecoRepository.EnderecoPorId(academia.EnderecoId);
+            }
+
+            return AcademiaMap.MapAcademia(academias);
         }
 
         private void validarDadosAtualizar(AcademiaInput academia)
